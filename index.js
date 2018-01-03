@@ -3,6 +3,7 @@ const shell = require('shelljs')
 let running = false;
 module.exports = (interval) => {
 	if (running) return;
+	if (process.env.exec_mode == "cluster_mode" && process.env[process.env.instance_var] > 0) return;
 	interval = interval || '* */12 * * *';
 	running = true;
 	if (shell.which('git')) {
