@@ -1,6 +1,6 @@
 {
   "name": "quite-update",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "require(\"quite-update\")",
   "main": "index.js",
   "repository": {
@@ -11,5 +11,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Landgraf Paul",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "node-cron": "^1.2.1",
+    "shelljs": "^0.7.8"
+  }
 }
