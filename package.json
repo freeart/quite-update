@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "require(\"quite-update\")",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:freeart/quite-update.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Landgraf Paul",
   "license": "ISC"
 }
