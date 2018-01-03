@@ -1,6 +1,6 @@
 {
   "name": "quite-update",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "require(\"quite-update\")",
   "main": "index.js",
   "repository": {
