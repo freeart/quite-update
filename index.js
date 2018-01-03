@@ -14,24 +14,25 @@ module.exports = (interval) => {
 		if (!process.env.name) {
 			return console.error('Updater: Pm2 is not found');
 		}
+		console.log("Updater: Is running")
 		cron.schedule(interval, () => {
 			let res;
-		res = shell.exec('git pull');
-		if (res.code !== 0) {
-			return console.error('Updater: Git pull failed');
-		}
-		if (res.stdout.indexOf("up-to-date") === -1) {
-			res = shell.exec(`npm install`);
+			res = shell.exec('git pull');
 			if (res.code !== 0) {
-				return console.error('Updater: npm install failed');
+				return console.error('Updater: Git pull failed');
 			}
+			if (res.stdout.indexOf("up-to-date") === -1) {
+				res = shell.exec(`npm install`);
+				if (res.code !== 0) {
+					return console.error('Updater: npm install failed');
+				}
 
-			res = shell.exec(`pm2 restart ${process.env.name}`);
-			if (res.code !== 0) {
-				return console.error('Updater: Pm2 restart failed');
+				res = shell.exec(`pm2 restart ${process.env.name}`);
+				if (res.code !== 0) {
+					return console.error('Updater: Pm2 restart failed');
+				}
+				console.log("Updater: Updated and restarted")
 			}
-			console.log("Updater: Updated and restarted")
-		}
-	});
+		});
 	}
 };
