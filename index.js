@@ -18,6 +18,11 @@ module.exports = (interval) => {
 		console.log("Updater: Is running")
 		cron.schedule(interval, () => {
 			let res;
+
+			res = shell.exec('git reset --hard');
+			if (res.code !== 0) {
+				return console.error('Updater: Git reset failed');
+			}
 			res = shell.exec('git pull');
 			if (res.code !== 0) {
 				return console.error('Updater: Git pull failed');
