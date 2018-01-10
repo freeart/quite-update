@@ -1,6 +1,7 @@
 let running = false;
-module.exports = (interval, cb) => {
-	interval = interval || '0 */6 * * *';
+module.exports = (setup, cb) => {
+	setup = setup || {}
+	setup.interval = setup.interval || '0 */6 * * *';
 
 	if (!process.env.name) {
 		return cb && setImmediate(() => cb("pm2 is not found", {status: null}));
@@ -25,9 +26,11 @@ module.exports = (interval, cb) => {
 		onTick: () => {
 			let res;
 
-			res = shell.exec('git reset --hard');
-			if (res.code !== 0) {
-				return cb && setImmediate(() => cb(res, {task, status: -1}));
+			if (setup.strategy == "reset") {
+				res = shell.exec('git reset --hard');
+				if (res.code !== 0) {
+					return cb && setImmediate(() => cb(res, {task, status: -1}));
+				}
 			}
 			res = shell.exec('git pull');
 			if (res.code !== 0) {
