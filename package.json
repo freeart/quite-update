@@ -1,6 +1,6 @@
 {
   "name": "quite-update",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "require(\"quite-update\")",
   "main": "index.js",
   "repository": {
@@ -13,7 +13,7 @@
   "author": "Landgraf Paul",
   "license": "ISC",
   "dependencies": {
-    "node-cron": "^1.2.1",
+    "cron": "^1.3.0",
     "shelljs": "^0.7.8"
   }
 }

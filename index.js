@@ -1,44 +1,52 @@
-const shell = require('shelljs')
-
 let running = false;
-module.exports = (interval) => {
+module.exports = (interval, cb) => {
+	interval = interval || '0 */6 * * *';
+
+	if (!process.env.name) {
+		return cb && setImmediate(() => cb("pm2 is not found", {status: null}));
+	}
+
+	const shell = require('shelljs');
+	shell.config.silent = true;
+
+	if (!shell.which('git')) {
+		return cb && setImmediate(() => cb("git is not found", {status: null}));
+	}
+
 	if (running) return;
 	if (process.env.exec_mode == "cluster_mode" && process.env[process.env.instance_var] > 0) return;
-	interval = interval || '0 */6 * * *';
+
 	running = true;
-	if (shell.which('git')) {
-		const cron = require('node-cron');
-		const valid = cron.validate(interval);
-		if (!valid) {
-			return console.error("Updater: invalid interval", interval)
-		}
-		if (!process.env.name) {
-			return console.error('Updater: Pm2 is not found');
-		}
-		console.log("Updater: Is running")
-		cron.schedule(interval, () => {
+
+	const cron = require('cron');
+
+	const task = new cron.CronJob({
+		cronTime: interval,
+		onTick: () => {
 			let res;
 
 			res = shell.exec('git reset --hard');
 			if (res.code !== 0) {
-				return console.error('Updater: Git reset failed');
+				return cb && setImmediate(() => cb(res, {task, status: -1}));
 			}
 			res = shell.exec('git pull');
 			if (res.code !== 0) {
-				return console.error('Updater: Git pull failed');
+				return cb && setImmediate(() => cb(res, {task, status: -2}));
 			}
 			if (res.stdout.indexOf("up-to-date") === -1) {
 				res = shell.exec(`npm install`);
 				if (res.code !== 0) {
-					return console.error('Updater: npm install failed');
+					return cb && setImmediate(() => cb(res, {task, status: -3}));
 				}
 
 				res = shell.exec(`pm2 restart ${process.env.name}`);
 				if (res.code !== 0) {
-					return console.error('Updater: Pm2 restart failed');
+					return cb && setImmediate(() => cb(res, task));
 				}
-				console.log("Updater: Updated and restarted")
 			}
-		});
-	}
+			cb && setImmediate(() => cb(null, {task, status: 2}));
+		},
+		start: true
+	});
+	cb && setImmediate(() => cb(null, {task, status: 1}))
 };
