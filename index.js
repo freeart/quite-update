@@ -22,7 +22,7 @@ module.exports = (setup, cb) => {
 	const cron = require('cron');
 
 	const task = new cron.CronJob({
-		cronTime: interval,
+		cronTime: setup.interval,
 		onTick: () => {
 			let res;
 
