@@ -42,7 +42,7 @@ module.exports = (setup, cb) => {
 					return cb && setImmediate(() => cb(res, {task, status: -3}));
 				}
 
-				res = shell.exec(`pm2 restart ${process.env.name}`);
+				res = shell.exec(`nohup pm2 restart ${process.env.name} &`);
 				if (res.code !== 0) {
 					return cb && setImmediate(() => cb(res, task));
 				}
