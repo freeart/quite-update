@@ -25,24 +25,24 @@ module.exports = (setup, cb) => {
 			if (setup.strategy == "reset") {
 				res = shell.exec('git reset --hard');
 				if (res.code !== 0) {
-					return cb && setImmediate(() => cb(res, {task, status: -1}));
+					return cb && setImmediate(() => cb(res, {task, status: 'GIT RESET FAULT'}));
 				}
 			}
 			res = shell.exec('git pull');
 			if (res.code !== 0) {
-				return cb && setImmediate(() => cb(res, {task, status: -2}));
+				return cb && setImmediate(() => cb(res, {task, status: 'GIT PULL FAULT'}));
 			}
 			if (res.stdout.replace("-", " ").indexOf("up to date") === -1) {
 				res = shell.exec(`npm install`);
 				if (res.code !== 0) {
-					return cb && setImmediate(() => cb(res, {task, status: -3}));
+					return cb && setImmediate(() => cb(res, {task, status: 'NPM INSTALL FAULT'}));
 				}
 
 				return process.exit(0);
 			}
-			cb && setImmediate(() => cb(null, {task, status: 2}));
+			cb && setImmediate(() => cb(null, {task, status: 'NO UPDATES'}));
 		},
 		start: true
 	});
-	cb && setImmediate(() => cb(null, {task, status: 1}))
+	cb && setImmediate(() => cb(null, {task, status: "RUNNING"}))
 };
