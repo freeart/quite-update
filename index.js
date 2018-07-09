@@ -32,13 +32,13 @@ module.exports = (setup, cb) => {
 			if (res.code !== 0) {
 				return cb && setImmediate(() => cb(res, {task, status: -2}));
 			}
-			if (res.stdout.indexOf("up-to-date") === -1) {
+			if (res.stdout.replace("-", " ").indexOf("up to date") === -1) {
 				res = shell.exec(`npm install`);
 				if (res.code !== 0) {
 					return cb && setImmediate(() => cb(res, {task, status: -3}));
 				}
 
-				process.exit(0);
+				return process.exit(0);
 			}
 			cb && setImmediate(() => cb(null, {task, status: 2}));
 		},
