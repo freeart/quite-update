@@ -3,10 +3,6 @@ module.exports = (setup, cb) => {
 	setup = setup || {}
 	setup.interval = setup.interval || '0 */6 * * *';
 
-	if (!process.env.name) {
-		return cb && setImmediate(() => cb("pm2 is not found", {status: null}));
-	}
-
 	const shell = require('shelljs');
 	shell.config.silent = true;
 
@@ -42,10 +38,7 @@ module.exports = (setup, cb) => {
 					return cb && setImmediate(() => cb(res, {task, status: -3}));
 				}
 
-				res = shell.exec(`nohup pm2 restart ${process.env.name} &`);
-				if (res.code !== 0) {
-					return cb && setImmediate(() => cb(res, task));
-				}
+				process.exit(0);
 			}
 			cb && setImmediate(() => cb(null, {task, status: 2}));
 		},
