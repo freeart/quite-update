@@ -7,7 +7,7 @@ module.exports = (setup, cb) => {
 	shell.config.silent = true;
 
 	if (!shell.which('git')) {
-		return cb && setImmediate(() => cb("git is not found", {status: null}));
+		return cb && setImmediate(() => cb("git is not found", { status: null }));
 	}
 
 	if (running) return;
@@ -25,29 +25,34 @@ module.exports = (setup, cb) => {
 			if (setup.strategy == "reset") {
 				res = shell.exec('git reset --hard');
 				if (res.code !== 0) {
-					return cb && setImmediate(() => cb(res, {task, status: 'GIT RESET FAULT'}));
+					return cb && setImmediate(() => cb(res, { task, status: 'GIT RESET FAULT' }));
 				}
 			}
-			res = shell.exec('git pull');
-			if (res.code !== 0) {
-				return cb && setImmediate(() => cb(res, {task, status: 'GIT PULL FAULT'}));
+			for (let repeat = 3; repeat >= 0; repeat--) {
+				res = shell.exec('git pull');
+				if (res.code === 0) {
+					break;
+				}
+				if (repeat == 0 && res.code !== 0) {
+					return cb && setImmediate(() => cb(res, { task, status: 'GIT PULL FAULT' }));
+				}
 			}
 			if (res.stdout.replace("-", " ").indexOf("up to date") === -1) {
 				res = shell.exec(`npm install`);
 				if (res.code !== 0) {
-					return cb && setImmediate(() => cb(res, {task, status: 'NPM INSTALL FAULT'}));
+					return cb && setImmediate(() => cb(res, { task, status: 'NPM INSTALL FAULT' }));
 				}
 
 				res = shell.exec(`npm update`);
 				if (res.code !== 0) {
-					return cb && setImmediate(() => cb(res, {task, status: 'NPM UPDATE FAULT'}));
+					return cb && setImmediate(() => cb(res, { task, status: 'NPM UPDATE FAULT' }));
 				}
 
 				return process.exit(0);
 			}
-			cb && setImmediate(() => cb(null, {task, status: 'NO UPDATES'}));
+			cb && setImmediate(() => cb(null, { task, status: 'NO UPDATES' }));
 		},
 		start: true
 	});
-	cb && setImmediate(() => cb(null, {task, status: "RUNNING"}))
+	cb && setImmediate(() => cb(null, { task, status: "RUNNING" }))
 };
