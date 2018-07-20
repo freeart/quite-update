@@ -38,6 +38,11 @@ module.exports = (setup, cb) => {
 					return cb && setImmediate(() => cb(res, {task, status: 'NPM INSTALL FAULT'}));
 				}
 
+				res = shell.exec(`npm update`);
+				if (res.code !== 0) {
+					return cb && setImmediate(() => cb(res, {task, status: 'NPM UPDATE FAULT'}));
+				}
+
 				return process.exit(0);
 			}
 			cb && setImmediate(() => cb(null, {task, status: 'NO UPDATES'}));
