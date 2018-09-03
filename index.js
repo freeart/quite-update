@@ -37,7 +37,7 @@ module.exports = (setup, cb) => {
 					return cb && setImmediate(() => cb(res, { task, status: 'GIT PULL FAULT' }));
 				}
 			}
-			if (res.stdout.replace("-", " ").indexOf("up to date") === -1) {
+			if (res.stdout.replace(/-/g, " ").indexOf("up to date") === -1) {
 				res = shell.exec(`npm install`);
 				if (res.code !== 0) {
 					return cb && setImmediate(() => cb(res, { task, status: 'NPM INSTALL FAULT' }));
